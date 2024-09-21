@@ -1,0 +1,8 @@
+src/backend/app.db
+src/backend/app.db-shm
+src/backend/app.db-wal
+src/backend/Data/Migrations
+src/backend/app.sqbpro
+src/backend/Assets/Images/
+src/backend/wwwroot/
+src/backend/Assets/
