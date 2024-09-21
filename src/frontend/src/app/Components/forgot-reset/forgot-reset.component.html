@@ -1,0 +1,45 @@
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic">
+    <div class="authentication-inner">
+      <div class="card">
+        <div class="card-body">
+          <div class="app-brand justify-content-center">
+            <img src="../../../assets/_images/logo_zoom.png" alt="Logo">
+            <span class="app-brand-text">AccessDenied</span>
+          </div>
+          <h4 class="mb-2">Adventure continues here 🚀</h4>
+          <p class="mb-4">Enter your new password</p>
+
+          <form #loginForm="ngForm" class="mg-3" autocomplete="off" id="formAuthentication" (ngSubmit)="resetPassword()">                
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Password</label>
+            </div>
+                <div class="input-group input-group-merge">
+                  <input type="password" id="form3Example4" class="form-control" name="password" [(ngModel)]="newRequest.NewPassword" [ngClass]="{'is-invalid': buttonClicked && invalidPassword && newRequest.NewPassword.length<5}" placeholder="New Password"/>
+                  <div class="invalid" *ngIf="buttonClicked && invalidPassword && newRequest.NewPassword.length<5">Password must be at least 5 characters</div>
+                </div>
+            </div>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Confirm Password</label>
+            </div>
+                <div class="input-group input-group-merge">
+                  <input type="password" id="form3Example5" class="form-control" name="confirm_password" #confirmPasswordInput="ngModel" [(ngModel)]="confirmPassword" [class.is-invalid]="
+                  confirmPassword !== newRequest.NewPassword &&
+                  confirmPassword !== ''"
+                  placeholder="Confirm Password"/>
+                </div>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit" [disabled]="!passwordMatch() || !newRequest.NewPassword">Reset Password</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="personimage">
+    <img src="../../../assets/_images/Saly-38.png" alt="forgotReset" (contextmenu)="disableRightClick($event)">
+  </div>
+</div>

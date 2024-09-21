@@ -1,0 +1,422 @@
+<app-nav></app-nav>
+<div id="all">
+  <div id="all1">
+    <br />
+    <div class="card-container">
+      
+    <div class="card clickable-div" [(ngModel)]="selectedRolee"  btnRadio="admin" (click)="toogleFilter('admin')">
+    <div class="card-title">
+      <label>Total {{numOfAdmins}} administrators</label>
+        <div class="pics">
+          <ng-container *ngFor="let user of admins.slice(0,3)">
+            <div *ngIf="user.profilePicUrl && !user.archived" class="avatar avatar-sm me-1">
+              <img [src]="uploadservice.getImage(user.profilePicUrl)" alt="Avatar" class="avatar rounded-circle shadow-4-strong">
+            </div>
+            <div *ngIf="!user.profilePicUrl && !user.archived" class="avatar avatar-sm me-1">
+              <ngx-avatars *ngIf="themeService.isDarkTheme"size="35" bgColor="rgb(56, 54, 87)" fgColor="rgb(183, 180, 242)" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+              <ngx-avatars *ngIf="!themeService.isDarkTheme" size="35" bgColor="#5d57c2" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+            </div>
+          </ng-container>
+        </div>
+    </div>
+    <div class="card-body">
+      <h3>Administrator</h3>
+    </div>
+    </div>
+
+
+    <div class="card clickable-div" name="number" [(ngModel)]="selectedRolee"  btnRadio="projectManager" (click)="toogleFilter('projectManager')">
+      <div class="card-title">
+        <label>Total {{numOfPM}} project managers</label>
+          <div *ngIf="projectMangers" class="pics">
+          <ng-container *ngFor="let user of projectMangers.slice(0,3)">
+            <div *ngIf="user.profilePicUrl && !user.archived" class="avatar avatar-sm me-1">
+              <img [src]="uploadservice.getImage(user.profilePicUrl)" alt="Avatar" class="avatar rounded-circle shadow-4-strong">
+            </div>
+            <div *ngIf="!user.profilePicUrl && !user.archived" class="avatar avatar-sm me-1">
+              <ngx-avatars *ngIf="themeService.isDarkTheme" size="35" bgColor="rgb(56, 54, 87)" fgColor="rgb(183, 180, 242)" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+              <ngx-avatars *ngIf="!themeService.isDarkTheme" size="35" bgColor="#5d57c2" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+            </div>
+          </ng-container>
+        </div>     
+      </div>
+      <div class="card-body">
+        <h3>Project Manager</h3>
+    </div>
+    </div>
+
+    <div class="card clickable-div " name="members" [(ngModel)]="selectedRolee" btnRadio="member" (click)="toogleFilter('member')">
+      <div class="card-title">
+        <label>Total {{numOfMembers}} members</label>
+      <div class="pics">
+      <ng-container *ngFor="let user of members.slice(0,3)">
+        <div *ngIf="user.profilePicUrl && !user.archived" class="avatar avatar-sm me-1">
+          <img [src]="uploadservice.getImage(user.profilePicUrl)" alt="Avatar" class="avatar rounded-circle shadow-4-strong">
+        </div>
+        <div *ngIf="!user.profilePicUrl && !user.archived" class="avatar avatar-sm me-1">
+          <ngx-avatars *ngIf="themeService.isDarkTheme" size="35" bgColor="rgb(56, 54, 87)" fgColor="rgb(183, 180, 242)" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+          <ngx-avatars *ngIf="!themeService.isDarkTheme" size="35" bgColor="#5d57c2" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+        </div>
+      </ng-container>
+    </div>
+      </div>
+    <div class="card-body">
+      <h3>Member</h3>
+    </div>
+    </div>
+    </div>
+    <div class="invite">
+      <div class="leftInvite">
+        <input class="form-control" type="text" placeholder="Search users" [(ngModel)]="searchTerm" (input)="filterUsers();"/>
+      <select class="page_size" *ngIf="filteredUsers>5"  [(ngModel)]="pageSize" (ngModelChange)="filterUsers()">
+        <option value="5" hidden selected>Select page size</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+    </div>
+      <div class="inputEmail">
+        <input type="email" id="form3Example3" class="form-control" name="email" [(ngModel)]="invitation.receiver" placeholder="Enter new user's email"  />
+        <button class="btn btn-primary" type="submit" (click)="Invite()">Invite new user</button>
+        <button class="btn btn-primary1" type="submit" (click)="Invite()">Invite user</button>
+      </div>
+    </div>
+    <br />
+    <div class="table-responsive text-nowrap">
+      <table class="table tTableAdmin">
+      <thead>
+        <tr>
+          <th class="userSort">User
+            <svg (click)="toggleSortOrder('Admin')" [ngClass]="getSortClass()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+          <th>Email </th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr *ngFor="let user of allUsers" >
+          <td class="prvaKolona" >
+            <div class="d-flex justify-content-start align-items-center">
+              <div class="avatar-wrapper">
+                <div *ngIf="user.profilePicUrl" class="avatar avatar-sm me-2">
+                  <img [src]="uploadservice.getImage(user.profilePicUrl)" alt="Avatar" class="avatar rounded-circle shadow-4-strong">
+                </div>
+                <div *ngIf="!user.profilePicUrl" class="avatar avatar-sm me-2">
+                  <ngx-avatars *ngIf="themeService.isDarkTheme" size="35" bgColor="rgb(56, 54, 87)" fgColor="rgb(183, 180, 242)" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+                  <ngx-avatars *ngIf="!themeService.isDarkTheme" size="35" bgColor="#5d57c2" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+                </div>
+              </div>
+              <div class="d-flex flex-column">
+                <span  class="text-body text-truncate fw-medium">{{user.firstName}} {{user.lastName}}</span>
+              </div>
+            </div>
+          </td>
+          <td class="ostaleKolone">
+            <div class="d-flex justify-content-start align-items-center">
+              <span class="text-body text-truncate fw-medium">{{user.email}}</span>
+            </div>
+          </td>
+          <td class="ostaleKolone"> <span class="text-body text-truncate fw-medium">{{GetUserRole(user.role)}}</span></td>
+          <td class="ostaleKolone">
+            <div class="d-flex align-items-center tblActions">
+              <div class="tActionSvg" pTooltip="Update User" tooltipPosition="top">
+                <svg xmlns="http://www.w3.org/2000/svg" (click)="openUserEditModal(updateUser,user)" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" id="tableIcon" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                </svg>
+              </div>
+              <div class="tActionSvg" pTooltip="Change Role" tooltipPosition="top" *ngIf="!currentUser(user.id)" >
+                <svg xmlns="http://www.w3.org/2000/svg"  (click)="openRoleArchModal(changeRole,user)" width="16" height="16" fill="currentColor" class="bi bi-person-up" id="tableIcon" viewBox="0 0 16 16">
+                  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                  <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                </svg>
+              </div>
+              <div class="tActionSvg" pTooltip="Archive User" tooltipPosition="top">
+                <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!currentUser(user.id)" (click)="openRoleArchModal(archiveUser,user)" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16" class="bi bi-pencil-square" id="tableIcon">
+                  <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+                </svg>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="col-sm-12 col-md-6">
+      <div class="archUsers archCursor" (click)="openModal1(archivedUsers)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+        <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+      </svg><label class="textArch archCursor" style="margin-left: 5px;">View archieved users</label>
+      </div>
+      <div class="dataTables_paginate paging_simple_numbers" *ngIf="this.filteredUsers>this.pageSize" id="pages">
+        <ul class="pagination">
+          <li *ngIf="totalusersArray.length>5" class="paginate_buttons previous" [class.disabled]="currentPage === 1">
+            <button (click)="goToPage(1)" [disabled]="currentPage === 1">&laquo;</button>
+          </li>
+          <li class="paginate_button previous" [class.disabled]="currentPage === 1">
+            <button (click)="previousPage()" [disabled]="currentPage === 1">&lt;</button>
+          </li>
+          <li class="paginate_button" *ngFor="let pageNumber of getDisplayedPages()">
+            <button (click)="goToPage(pageNumber)" [class.active]="pageNumber === currentPage">{{ pageNumber }}</button>
+          </li>
+          <li class="paginate_button next" [class.disabled]="currentPage === totalPages">
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages">&gt;</button>
+          </li>
+          <li *ngIf="totalusersArray.length>5" class="paginate_buttons next" [class.disabled]="currentPage === totalPages">
+            <button  (click)="goToPage(totalusersArray.length)" [disabled]="currentPage === totalPages">&raquo;</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+
+<ng-template #updateUser>
+  <div class="modal-header">
+    <h5>Update user's info</h5>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body tModalBody">
+    <form (ngSubmit)="UpdateUser(curentUserId)">
+      <div class="mb-3 tEmail">
+        <label for="email" class="form-label tInfoLabel">Email</label>
+        <input type="email" id="form3Example3" class="form-control email" name="email" [(ngModel)]="newEmail" placeholder="{{curentEmail}}" [ngClass]="{'is-invalid': !regexEmail.test(newEmail)}"/>
+        <div class="invalid" *ngIf="!regexEmail.test(newEmail)">Please enter a valid email address</div>
+      </div>
+      <div class="mb-3">
+        <label for="fisrt name" class="form-label tInfoLabel">First Name</label>
+        <input type="text" id="form3Example3" class="form-control fname" name="firstName" [ngClass]="{'is-invalid': !regex.test(newFisrtName)}" [(ngModel)]="newFisrtName"/>
+        <div class="invalid" *ngIf="!regex.test(newFisrtName) && newFisrtName.length<=30">First name must be longer and contain only letters</div>
+        <div class="invalid" *ngIf="!regex.test(newFisrtName) && newFisrtName.length>30">First Name is too long</div>
+      </div>
+      <div class="mb-3">
+        <label for="last name" class="form-label tInfoLabel">Last Name</label>
+        <input type="text" id="form3Example3" class="form-control lname" name="lastName" [ngClass]="{'is-invalid': !regex.test(newLastName)}" [(ngModel)]="newLastName"/>
+        <div class="invalid" *ngIf="!regex.test(newLastName) && newLastName.length<=30">Last name must be longer and contain only letters</div>
+        <div class="invalid" *ngIf="!regex.test(newLastName) && newLastName.length>30">Last Name is too long</div>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary d-grid w-100" style="margin-top: 1.5rem;" type="submit">Update</button>
+      </div>
+  </form>
+  </div>
+</ng-template>
+
+<ng-template #archiveUser>
+  <div class="modal-header">
+    <h4>Archive user</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body tModalBody">
+    <form *ngIf="selectedUserRole!=2 || (selectedUserRole==2 && pmCounter>1 && pmProjectCount==0)">
+      <div class="mb-3 archSpan">
+        <span>Are you sure you want to archive this user?</span>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary d-grid w-100 archBtn" type="submit" (click)="ArchiveUser(curentUserId)" (click)="modalRef?.hide()">Archive user</button>
+      </div>
+    </form>
+    <div *ngIf="selectedUserRole==2 && pmCounter==1" class="notifyAdmin">
+      <p class="tTextAdmin"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16" style="padding-right: 5px;">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+      </svg>It is not possible to archive a project manager because there are no other project managers assigned within the application.</p>
+    </div>
+    <div *ngIf="selectedUserRole==2 && pmCounter>1 && pmProjectCount>0">
+      <div class="alert alert-warning" style="margin-top: 16px;">
+        You must assign the projects to another project manager before archiving this user.
+      </div>
+      <div class="projectName">Project Name</div>
+      <div class="managerScroll">
+        <table class="table managers">
+          <tbody>
+            <tr *ngFor="let project of pmProjects; let i = index">
+              <td>{{project.projectName}}</td>
+              <td>
+                <ng-select class="ngAdminSelect" [items]="projectManagers" [(ngModel)]="selectedManagers[i]" name="assignee" bindLabel="fullName" placeholder="Select Project Manager">
+                  <ng-template ng-option-tmp let-manager="item" let-index="index">
+                    <div classs="tArchUser">
+                      <div *ngIf="manager.profilePicUrl" class="nameAvatar">
+                        <img [src]="uploadservice.getImage(manager.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" style="height: 25px; width: 25px;"/>
+                      </div>
+                      <div *ngIf="!manager.profilePicUrl" class="nameAvatar">
+                        <ngx-avatars size="25" bgColor="#5d57c2" [name]="manager?.firstName + ' ' + manager?.lastName"></ngx-avatars>
+                      </div>
+                      <div class="tAssigneeName">
+                        {{ manager?.firstName + ' ' + manager?.lastName }}
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template ng-label-tmp let-item="item">
+                    <div style="display: flex; align-items: center;">
+                      <div *ngIf="item.profilePicUrl" class="nameAvatar">
+                        <img [src]="uploadservice.getImage(item.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" style="height: 25px; width: 25px;"/>
+                      </div>
+                      <div *ngIf="!item.profilePicUrl" class="nameAvatar">
+                        <ngx-avatars size="25" bgColor="#5d57c2" [name]="item?.firstName + ' ' + item?.lastName" value="75%"></ngx-avatars>
+                      </div>
+                      <div>
+                        {{ item?.firstName + ' ' + item?.lastName }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+     </div>
+    </div>
+  </div>
+  <div *ngIf="selectedUserRole==2 && pmCounter>1 && pmProjectCount>0" class="modal-footer d-flex justify-content-between">
+    <div>By clicking the button, the user will be archived.</div>
+    <button class="btn btn-primary" (click)="demoteProjectManager();ArchiveUser(curentUserId);modalRef?.hide()" [disabled]="!checkAssignementCompletition()">Archive user</button>
+  </div>
+</ng-template>
+
+<ng-template #changeRole>
+  <div class="modal-header archy">
+    <h4>Change user's role</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body tModalBody">
+    <form *ngIf="selectedUserRole!=2 || (selectedUserRole==2 && pmCounter>1 && pmProjectCount==0)" (ngSubmit)="ChangeUserRole(curentUserId)">
+      <div class="mb-3 selectRole">
+        <select name="role" [(ngModel)]="userRole" required>
+          <option value="" hidden selected>{{currentRole}}</option>
+          <option value="0" hidden>Admin</option>
+          <option value="1">Member</option>
+          <option value="2">Project Manager</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary d-grid w-100" type="submit" (click)="modalRef?.hide()" >Change</button>
+      </div>
+    </form>
+    <div *ngIf="selectedUserRole==2 && pmCounter==1" class="notifyAdmin">
+      <p class="tTextAdmin"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16" style="padding-right: 5px;">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+      </svg>It is currently not possible to change the role of a project manager because no other project managers are assigned within the application.</p>
+    </div>
+    <div *ngIf="selectedUserRole==2 && pmCounter>1 && pmProjectCount>0">
+      <div class="alert alert-warning" style="margin-top: 16px;">
+        You must assign the projects to another project manager before changing the role.
+      </div>
+      <div class="projectName">Project Name</div>
+      <div class="managerScroll">
+        <table class="table managers">
+          <tbody>
+            <tr *ngFor="let project of pmProjects; let i = index">
+              <td>{{project.projectName}}</td>
+              <td>
+                <ng-select class="ngAdminSelect" [items]="projectManagers" [(ngModel)]="selectedManagers[i]" name="assignee" bindLabel="fullName" placeholder="Select Project Manager">
+                  <ng-template ng-option-tmp let-manager="item" let-index="index">
+                    <div style="display: flex; align-items: center;">
+                      <div *ngIf="manager.profilePicUrl" class="nameAvatar">
+                        <img [src]="uploadservice.getImage(manager.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" style="height: 25px; width: 25px;"/>
+                      </div>
+                      <div *ngIf="!manager.profilePicUrl" class="nameAvatar">
+                        <ngx-avatars size="25" bgColor="#5d57c2" [name]="manager?.firstName + ' ' + manager?.lastName" value="75%"></ngx-avatars>
+                      </div>
+                      <div class="tAssigneeName">
+                        {{ manager?.firstName + ' ' + manager?.lastName }}
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template ng-label-tmp let-item="item">
+                    <div style="display: flex; align-items: center;">
+                      <div *ngIf="item.profilePicUrl" class="nameAvatar">
+                        <img [src]="uploadservice.getImage(item.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" style="height: 25px; width: 25px;"/>
+                      </div>
+                      <div *ngIf="!item.profilePicUrl" class="nameAvatar">
+                        <ngx-avatars size="25" bgColor="#5d57c2" [name]="item?.firstName + ' ' + item?.lastName" value="75%"></ngx-avatars>
+                      </div>
+                      <div>
+                        {{ item?.firstName + ' ' + item?.lastName }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+     </div>
+    </div>
+  </div>
+  <div *ngIf="selectedUserRole==2 && pmCounter>1 && pmProjectCount>0" class="modal-footer d-flex justify-content-between">
+    <div>By clicking the button, the user's role will be changed to member.</div>
+    <button class="btn btn-primary" (click)="demoteProjectManager();modalRef?.hide()" [disabled]="!checkAssignementCompletition()">Change Role</button>
+  </div>
+</ng-template>
+
+<ng-template #archivedUsers>
+  <div class="modal-header text-center">
+    <h4 class="modal-title text-center">Archived users</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body tModalBody" *ngIf="archived_users.length>0; else noArchivedUsers">
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          <tr *ngFor="let user of archived_users" >
+            <td >
+              <div class="d-flex justify-content-start align-items-center">
+                <div class="avatar-wrapper">
+                  <div *ngIf="user.profilePicUrl" class="nameAvatar boardAvatar archAvatar">
+                    <img [src]="uploadservice.getImage(user.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" style="height: 25px; width: 25px;"/>
+                  </div>
+                  <div *ngIf="!user.profilePicUrl" class="nameAvatar boardAvatar archAvatar">
+                    <ngx-avatars size="25" bgColor="#5d57c2" [name]="user?.firstName + ' ' + user?.lastName"></ngx-avatars>
+                  </div>
+                </div>
+                <div class="d-flex flex-column">
+                  <span  class="text-body text-truncate fw-medium">{{user.firstName}} {{user.lastName}}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex flex-column">
+                <span class="text-body text-truncate fw-medium">{{user.email}}</span>
+              </div>
+            </td>
+            <td><span class="text-body text-truncate fw-medium">{{GetUserRole(user.role)}}</span></td>
+            <td>
+              <input class="tPCheck" type="checkbox" style="align-items:center;" (change)="putInArray(user.id)" [(ngModel)]="!user.archived" >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+    <div class="mb-3 text-center">
+      <button class="btn btn-primary d-grid w-50 mx-auto archBtn" type="submit" (click)="removeFromArchived()" (click)="modalRef?.hide()" >Remove from Archived</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #noArchivedUsers>
+  <div class="text-center noArch">There are no archived users.</div>
+</ng-template>

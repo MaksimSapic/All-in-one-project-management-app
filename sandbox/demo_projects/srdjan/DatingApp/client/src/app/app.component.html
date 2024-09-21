@@ -1,0 +1,31 @@
+<h1>{{ title }}</h1>
+<div class="container">
+    <div id="left">
+        <table class="user-table">
+        <thead>
+            <tr>
+            <th>ID</th>
+            <th>User Name</th>
+            <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+            <td>{{ user.id }}</td>
+            <td>{{ user.userName }}</td>
+            <td>
+                <button (click)="deleteUser(user.id)">Delete</button>
+            </td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <div id="right">
+        <h3>Add User</h3>
+        <input type="text" #userNameInput placeholder="Enter user name" />
+        <br />
+        <button (click)="addUser(userNameInput.value)">Add User</button><br />
+        <span *gIf="!userNameInput.value" style="color: red">Unesi validno ime Korisnika</span>
+        <span *ngIf="userNameInput.value" style="color: white">Uspesno uneto ime</span>
+    </div>
+  </div>

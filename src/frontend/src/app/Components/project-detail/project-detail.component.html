@@ -1,0 +1,587 @@
+<app-nav></app-nav>
+<div class="content-wrapper">
+  <app-popup style="z-index: 100;"class="pop" *ngIf="showPopUp && clickedTask" [task]="clickedTask" (backClicked)="closePopup();">
+  </app-popup>
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <div *ngIf="project">
+      <div class="project-heading flex-container">
+        <div class="projName">
+          <span>{{ project.projectName }}</span>
+        </div>
+        <div class="projInfo">
+          <div class="archIcon" pTooltip="Archive Project" tooltipPosition="left">
+            <svg (click)="openArchiveProjectcModal(arhieveCurrentProject)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16" *ngIf="userRole==0">
+              <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+            </svg>
+          </div>
+          <div class="projInfoBtn">
+            <button class="btn btn-primary btn-sm tProjDet" (click)="openProjectInfo(projectInfo)">Project Details</button>
+          </div>
+        </div>
+      </div>
+      <div class="button-selectors">
+        <div class="viewButtons">
+          <button class="btn btn-primary btn-lg tBtnSelectors btn-ViewType" [ngClass]="{'btn-active': viewMode === 'table', 'btn-inactive': viewMode !== 'table'}" (click)="changeToTable()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-table" viewBox="0 0 16 16">
+            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"/>
+          </svg>Table View</button>
+          <button class="btn btn-primary btn-lg btn-ViewType" [ngClass]="{'btn-active': viewMode === 'kanban', 'btn-inactive': viewMode !== 'kanban'}" (click)="changeToKanban()" ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-kanban" viewBox="0 0 16 16">
+            <path d="M13.5 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm-11-1a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+            <path d="M6.5 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1zm-4 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1zm8 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1z"/>
+          </svg>Kanban</button>
+          <button class="btn btn-primary btn-lg btn-ViewType" [ngClass]="{'btn-active': viewMode === 'gantt', 'btn-inactive': viewMode !== 'gantt'}" (click)="changeToGant()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-steps" viewBox="0 0 16 16">
+            <path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0M2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5z"/>
+          </svg>Gantt</button>
+        </div>
+        <div class="actionLinks">
+          <div *ngIf="userRole == 0 || userRole == 1 || userRole == 2" class="new-item addTask" (click)="openNewTaskModal(newTask); resetNewTaskFields()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </svg>Add Task
+          </div>
+          <div *ngIf="userRole == 0 || userRole == 1 || userRole == 2" class="archTasks" (click)="openViewArchTaksModal(archivedTasksModal)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+            </svg>View Archived Tasks
+          </div>
+          <div *ngIf="userRole == 0 || userRole == 1 || userRole == 2" class="mngSection" (click)="openSectionModal(manageSections)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+            </svg>Manage Sections
+          </div>
+          <div class="mngMembers" (click)="openMemberManagment(memberManagment)" [ngStyle]="{ 'width.rem': userRole === 3 || userRole === 4 ? 7.5 : 10 }">
+            <svg *ngIf="userRole!=3 && userRole!=4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-gear" viewBox="0 0 16 16">
+              <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
+            </svg>
+            <svg *ngIf="userRole==3 || userRole==4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+              <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+            </svg>
+            {{ userRole === 3 || userRole === 4? 'Member list' : 'Manage Members' }}
+          </div>
+        </div>
+      </div>
+      <div class="card" *ngIf="viewMode === 'table'" style="z-index: 0;">
+        <div class="mFilters">
+          <div class="filter">
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Search by Task Name or Assignee"
+              [(ngModel)]="searchText"
+              (input)="filterTasks(); "
+              />
+          </div>
+          <div class="filter">
+            <select class="form-select" name="status" id="status" [(ngModel)]="selectedStatus" (change)="filterTasks();" >
+              <option value="" hidden selected>Select Status</option>
+              <option value="All">Select All</option>
+              <option *ngFor="let status of allStatuses" [value]="status.name">{{ status.name }}</option>
+            </select>
+          </div>
+          <div class="filter">
+            <p-calendar
+              [style]="{'width':'100%'}"
+              [hideOnDateTimeSelect]="false"
+              (onSelect)="filterTasks()"
+              (onClearClick)="filterTasks()"
+              placeholder="Filter by Date Range"
+              [(ngModel)]="rangeDates" 
+              selectionMode="range" 
+              [readonlyInput]="true"
+              [showButtonBar]="true"
+              dateFormat="MM dd, yy"
+              [firstDayOfWeek]="1"></p-calendar>
+          </div>
+        </div>
+        <div class="table-responsive text-nowrap">
+          <table class="table">
+            <thead>
+              <tr class="tHeader">
+                <th class="sortSvg">Task Name
+                  <svg (click)="toggleSortOrder('TaskName')" [ngClass]="getSortClass('TaskName')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+                  </svg>
+                </th>
+                <th class="sortSvg">Assignee
+                  <svg (click)="toggleSortOrder('Assignee')" [ngClass]="getSortClass('Assignee')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+                  </svg>
+                </th>
+                <th class="sortSvg">Start Date
+                  <svg (click)="toggleSortOrder('StartDate')" [ngClass]="getSortClass('StartDate')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+                  </svg>
+                </th>
+                <th class="sortSvg">End Date
+                  <svg (click)="toggleSortOrder('EndDate')" [ngClass]="getSortClass('EndDate')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+                  </svg>
+                </th>
+                <th class="sortSvg">Status
+                  <svg (click)="toggleSortOrder('StatusName')" [ngClass]="getSortClass('StatusName')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+                  </svg>
+                </th>
+              </tr>
+            </thead>
+          </table>
+          <div *ngFor="let section of groupedTasks | keyvalue: sectionOrder" class="section">
+            <p class="section-name" *ngIf="section.key !== 'No Section'" (click)="toggleSectionVisibility(section.key)">
+              <svg *ngIf="!section.value.visible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+              </svg>
+              <svg *ngIf="section.value.visible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+              </svg>
+              {{ section.key }}
+            </p>
+            <div *ngIf="section.value.visible || section.key === 'No Section'">
+              <table *ngIf="section.value.tasks.length > 0" class="table">
+                <tbody>
+                  <tr *ngFor="let task of section.value.tasks" class="td_row">
+                    <td [class.clicked]="clickedTask?.id === task.id"
+                    (click)="togglePopUp($event, task.id)">{{ task.taskName }}</td>
+                    <td>
+                      <div *ngIf="task.profilePicUrl">
+                        <img [src]="uploadservice.getImage(task.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" height="25" width="25"/>
+                        <span style="margin-left: 5px;">{{ task.firstName || task.lastName ? (task.firstName + ' ' + task.lastName) : 'Not assigned' }}</span>
+                      </div>
+                      <div *ngIf="!task.profilePicUrl" class="nameAvatar boardAvatar">
+                        <!-- <ngx-avatars *ngIf="themeService.isDarkTheme" size="25" bgColor="rgb(56, 54, 87)" fgColor="rgb(183, 180, 242)" [name]="task?.firstName + ' ' + task?.lastName"></ngx-avatars>
+                        <ngx-avatars *ngIf="!themeService.isDarkTheme" size="25" bgColor="#5d57c2" [name]="task?.firstName + ' ' + task?.lastName"></ngx-avatars> -->
+                        <ngx-avatars *ngIf="task.firstName" size="25" bgColor="#5d57c2" [name]="task?.firstName + ' ' + task?.lastName"></ngx-avatars>
+                        <svg *ngIf="!task.firstName" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                          <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                        </svg>
+                        <span style="margin-left: 5px;">{{ task.firstName || task.lastName ? (task.firstName + ' ' + task.lastName) : 'Not assigned' }}</span>
+                      </div>
+                    </td>
+                    <td>{{ task.startDate | date }}</td>
+                    <td>{{ task.endDate | date }}</td>
+                    <td class="badgeTd">
+                      <!-- <span class="badge" [style.background-color]="task.color">{{ task.statusName }}</span> -->
+                      <!-- <span class="badge" *ngIf="!themeService.isDarkTheme" [style.background-color]="task.color">{{ task.statusName }}</span> -->
+                      <div class="badgeX" *ngIf="!themeService.isDarkTheme" [style.background-color]="task.color" [style.color]="getDarkerColor(task.color)">{{ task.statusName }}</div>
+                      <div class="badgeX" *ngIf="themeService.isDarkTheme" [style.background-color]="getLessPoppingColor(task.color)" [style.color]="getPoppingColor(task.color)">{{ task.statusName }}</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="viewMode === 'kanban'">
+        <app-kanban></app-kanban>
+      </div>
+      <div *ngIf="viewMode === 'gantt'" class="ganttComponent">
+        <app-gantt></app-gantt>
+      </div>
+   </div>
+  </div>
+</div>
+
+<ng-template #projectInfo>
+  <div class="modal-container InfoModal">
+    <div class="modal-header modalHeadProjDetails">
+      <div class="input-group-text editName">
+        <h6 *ngIf="userRole==2 || userRole==3 || userRole==4"  class="projectName">{{ update.projectName }}</h6>
+        <input class="form-control titleInp" id="projectName" [(ngModel)]="update.projectName" (blur)="updateProject()" *ngIf="userRole==0 || userRole==1" [ngClass]="{'is-invalid': update.projectName?.length == 0 || (update && update.projectName && update.projectName.length > 100)}">
+      </div>
+      <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+    <div class="modal-body">
+      <div class="mb-3 mr-2">
+        <h5 class="heading">Details:</h5>
+        <div class="d-flex justify-content-between info tInfoDiv">
+          <div class="my-2">
+            <label for="projectStatus">Status:</label>
+            <select id="projectStatus" class="selectElements" [(ngModel)]="update.projectStatus" (change)="updateProject()" [disabled]="userRole == 4 || userRole == 3 || userRole == 2" [ngClass]="getStatusClass()">
+              <option class="DEFAULT_STAT" value=0>Proposed</option>
+              <option class="DEFAULT_STAT" value=1>InProgress</option>
+              <option class="DEFAULT_STAT" value=2>Completed</option>
+              </select>
+            </div>
+            <div class="my-2">
+              <label for="startDate">Start date:</label>
+              <span id="startDate" class="startDate">{{update.startDate | date }}</span>
+            </div>
+            <div class="my-2 sPrimeNgEndDate">
+              <div class="sLabel">
+                <label for="endDate">End date:</label>
+              </div>
+              <div class="sSpan">
+                <span *ngIf="userRole == 2 || userRole == 3 || userRole == 4" id="startDate" class="startDate">{{ update.endDate | date }}</span>
+              </div>
+              <div class="sPrimeNg" style="width: 130px !important;" *ngIf="userRole == 0 || userRole == 1">
+                <p-calendar
+                [style]="{'width':'130px'}"
+                [(ngModel)]="update.endDate"
+                inputId="endDate"
+                name="endDate"
+                [showButtonBar]="true"
+                [firstDayOfWeek]="1"
+                placeholder="{{ update.endDate | date }}"
+                dateFormat="MM dd, yy"
+                [minDate]="this.projectEndDate"
+                (onSelect)="updateProject()"
+                (click)="$event.stopPropagation()"
+                ></p-calendar>
+              </div>
+            </div>
+            <div *ngIf="userRole == 0 || userRole == 1" pTooltip="Please select a new end date that is later than the current one." class="dueDateTooltip">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+              </svg>
+            </div>
+            <div class="my-2">
+              <label for="endDate">Progress:</label>
+              <span>{{project.progress}}%</span>
+            </div>
+        </div>
+        </div>
+        <div class="mb-3 description">
+          <h5>Description</h5>
+          <quill-editor id="area-desc" class="area-desc" (click)="showEditOptions()" [(ngModel)]="update.description" (onBlur)="updateProject()" [modules]="quillService.editorModules" [formats]="quillService.editorFormats" [disabled]="userRole == 4 || userRole == 3 || userRole==2" [ngClass]="{'hide-toolbar': userRole == 4 || userRole == 3 || userRole == 2 || !enabledEditorOptions, 'show-toolbar': userRole == 0 && userRole == 1 && enabledEditorOptions}" placeholder=""></quill-editor>
+        </div>
+      </div>
+  </div>
+</ng-template>
+
+
+<ng-template #memberManagment>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h4>{{ (userRole === 0 || userRole === 1 || userRole === 2) ? 'Member Management' : 'Member list' }}</h4>
+      <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="userRole==1 || userRole == 0" class="mb-3 addmembers">
+          <h5>Add project members</h5>
+          <div class="addInfo">
+            <ng-select class="tMngMemb" [items]="addableUsers" [(ngModel)]="selectedUsers" [multiple]="true" bindLabel="name" placeholder="Add Project Members" optionLabel="name" name="Assignees" (click)="$event.stopPropagation()" style="height: 2rem;">
+              <ng-template ng-option-tmp let-user="item">
+                <div class="user-detail">
+                  <div *ngIf="user.profilePicUrl" class="nameAvatar">
+                    <img [src]="uploadservice.getImage(user.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" height="25" width="25">
+                    <div style="margin-left: 0.4rem;">{{ user.name }}</div>
+                  </div>
+                  <div *ngIf="!user.profilePicUrl" class="nameAvatar">
+                    <ngx-avatars size="25" bgColor="#5d57c2" [name]="user.name" value="75%"></ngx-avatars>
+                    <div style="margin-left: 0.4rem;">{{ user.name }}</div>
+                  </div>
+                  <div (click)="$event.stopPropagation()">
+                    <select (mousedown)="$event.stopPropagation()" [(ngModel)]="user.projectRole" [ngModelOptions]="{standalone: true}" class="assignee">
+                      <option value=1 *ngIf="!SelectedOwner(user) && !OwnerAlreadyExists(user.appUserId)">Project Owner</option>
+                      <option value=2>Manager</option>
+                      <option value=3>Participant</option>
+                      <option value=4 selected>Guest</option>
+                    </select>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <div class="ng-value-container">
+                  <div class="ng-value-label">
+                    <span *ngIf="item.profilePicUrl" class="ng-value-label"><img *ngIf="item.profilePicUrl"  class="avatar rounded-circle shadow-4-strong"  height="21" width="21"  [src]="uploadservice.getImage(item.profilePicUrl)">{{item.name}}</span>
+                    <span *ngIf="!item.profilePicUrl" class="ng-value-label d-inline-flex align-items-center"><ngx-avatars *ngIf="!item.profilePicUrl" size="21" bgColor="#5d57c2" [name]="item.name" value="75%"></ngx-avatars>{{item.name}}</span>
+                  </div>
+                  <div (click)="clear(item)" class="ng-value-icon" aria-hidden="true">×</div>
+              </div>
+              </ng-template>
+            </ng-select>
+            <button class="btn btn-primary btn-xs add" style="width: 100%" type="button" (click)="addProjectMembers()" [disabled]="this.selectedUsers.length == 0">Add members</button>
+        </div>
+      </div>
+      <div class="mb-3 members">
+        <h5>Project members</h5>
+        <input type="text" class="form-control form-control-sm search tNoBoxShadow" placeholder="Search by name" [(ngModel)]="searchTerm" (input)="filterUsers()">
+        <div class="d-flex tableHeaders">
+          <span>Name</span>
+          <span>{{ (userRole === 0 || userRole === 1 || userRole === 2) ? 'Change role' : ((userRole === 3 || userRole === 4) ? 'Project role' : '') }}</span>
+          <span>{{ (userRole === 0 || userRole === 1) ? 'Remove member' : ''}}</span>
+        </div>
+        <div class="mb-3 scroll manageMemberScroll">
+          <table class="table table-lg t2" id="table">
+            <tbody>
+              <tr *ngIf="filteredUsers.length == 0"><td>No results</td></tr>
+              <tr *ngFor="let user of filteredUsers; let i = index">
+                <td>
+                  <span *ngIf="user.profilePicUrl" class="ng-value-label"><img class="avatar rounded-circle shadow-4-strong" height="25" width="25" [src]="uploadservice.getImage(user.profilePicUrl)">{{ user.name }}</span>
+                  <span *ngIf="!user.profilePicUrl" class="ng-value-label d-inline-flex"><ngx-avatars size="25" bgColor="#5d57c2" [name]="user.name"></ngx-avatars>{{ user.name }}</span>
+                </td>
+                <td>
+                  <select *ngIf="user.projectRole!=0" class="assignee" [(ngModel)]="user.projectRole" (change)="updateUsersRole(user)" [disabled]="userRole == 2 || userRole == 4 || userRole == 3 || userId == user.appUserId">
+                    <option value=1 *ngIf="!OwnerAlreadyExists(user.appUserId)">Project Owner</option>
+                    <option value=2>Manager</option>
+                    <option value=3>Participant</option>
+                    <option value=4 selected>Guest</option>
+                  </select>
+                  <span class="isPM" *ngIf="user.projectRole == 0">Project Manager</span>
+                </td>
+                <td style="text-align: center;" class="tModalRemoveIcon">
+                  <svg *ngIf="userId != user.appUserId && userRole != 2 && userRole != 3 && userRole != 4" (click)="deleteAssigne(user.appUserId)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                  </svg>
+                  <span *ngIf="userId == user.appUserId" style="font-size: small;">(you)</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #newTask class="newTaskModal">
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Add New Task</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body">
+    <form class="mb-3" (ngSubmit)="saveTask()">
+      <div class="mb-1" autocomplete="off">
+          <label for="taskName" class="form-label">Task Name</label>
+          <input type="text" class="form-control tFormControl tNoBoxShadow" name="taskName" [(ngModel)]="newTaskName"  [ngClass]="{'is-invalid': buttonClicked && (!newTaskName || taskNameExists || newTaskName.length > 100)}" placeholder="Enter new tasks's name"/>
+          <div *ngIf="buttonClicked && !newTaskName && !taskNameExists" class="invalid">Please enter task name.</div>
+          <div *ngIf="buttonClicked && taskNameExists" class="invalid">You already have task with the same name.</div>
+          <div *ngIf="buttonClicked && newTaskName.length > 100 && !taskNameExists" class="invalid">Task name is too long</div>
+      </div>
+      <div class="mb-1" autocomplete="off">
+          <label for="taskDescription" class="form-label">Task Description</label>
+          <textarea [ngClass]="{'is-invalid': newTaskDescription.length > 5000}" style="font-size: 16px !important;" class="form-control tNoBoxShadow" class="form-control" name="taskDescription" [(ngModel)]="newTaskDescription" placeholder="Enter new tasks's description"></textarea>
+          <div class="invalid" *ngIf="newTaskDescription.length > 5000" class="invalid">Task description is too long</div>
+      </div>
+      <div class="mb-1">
+        <div class="tLabel">
+          <label for="startDate" class="form-label">Start Date</label>
+          <div pTooltip="Please choose a date within the project's specified date range. The start date cannot be in the past.">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+              <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+            </svg>
+          </div>
+        </div>
+        <div class="tNgCalendar">
+          <p-calendar
+          [style]="{'width':'100%'}"
+          [(ngModel)]="newTaskStartDate"
+          inputId="startDate"
+          name="startDate"
+          [showButtonBar]="true"
+          [firstDayOfWeek]="1"
+          placeholder="Start Date"
+          dateFormat="MM dd, yy"
+          [minDate]="projectStartDate<=today?today:projectStartDate"
+          [maxDate]="newTaskEndDate==null?(projectEndDate):newTaskEndDate"
+          [ngClass]="{'ng-invalid': buttonClicked && !newTaskStartDate || isInvalidDate()}"
+          ></p-calendar>
+        <div *ngIf="buttonClicked && !newTaskStartDate" class="invalid">Please enter start date.</div>
+        </div>
+      </div>
+      <div class="mb-1">
+        <div class="tLabel">
+          <label for="endDate" class="form-label">End Date</label>
+          <div pTooltip="Please choose a date within the project's specified date range.">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+              <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+            </svg>
+          </div>
+        </div>
+        <div class="tNgCalendar">
+          <p-calendar
+          [style]="{'width':'100%'}"
+          [(ngModel)]="newTaskEndDate"
+          inputId="endDate"
+          name="endtDate"
+          [showButtonBar]="true"
+          [firstDayOfWeek]="1"
+          placeholder="End Date"          
+          dateFormat="MM dd, yy"
+          [minDate]="newTaskStartDate==null?(today>=projectStartDate?today:projectStartDate):newTaskStartDate"
+          [maxDate]="projectEndDate"
+          [ngClass]="{'ng-invalid': buttonClicked && !newTaskEndDate || isInvalidDate()}">
+          </p-calendar>
+          <div *ngIf="buttonClicked && !newTaskEndDate" class="invalid">Please enter end date.</div>
+        </div>
+      </div>
+      <div class="mb-1 chooseAssignee" autocomplete="off">
+        <label for="assignee2" class="form-label">Assignee</label>
+        <div class="ng-select-wrapper">
+          <ng-select [ngClass]="{'ng-invalid': buttonClicked && !selectedUser}" class="asigneeDropdown" [items]="availableAssigness" [(ngModel)]="selectedUser" name="assignee" bindLabel="fullName" placeholder="Select Assignee">
+            <ng-template ng-option-tmp let-user="item" let-index="index">
+              <div style="display: flex; align-items: center;">
+                <div *ngIf="user.profilePicUrl" class="nameAvatar">
+                  <img [src]="uploadservice.getImage(user.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" height="25" width="25"/>
+                </div>
+                <div *ngIf="!user.profilePicUrl" class="nameAvatar">
+                  <ngx-avatars size="25" bgColor="#5d57c2" [name]="user?.firstName + ' ' + user?.lastName" value="75%"></ngx-avatars>
+                </div>
+                <div class="tAssigneeName">
+                  {{ user.fullName }}
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ng-label-tmp let-item="item">
+              <div style="display: flex; align-items: center;">
+                <div *ngIf="item.profilePicUrl" class="nameAvatar">
+                  <img [src]="uploadservice.getImage(item.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" height="25" width="25"/>
+                </div>
+                <div *ngIf="!item.profilePicUrl" class="nameAvatar">
+                  <ngx-avatars class="ngAvtr" size="25" bgColor="#5d57c2" [name]="item?.firstName + ' ' + item?.lastName" value="75%"></ngx-avatars>
+                </div>
+                <div>
+                  {{ item.fullName }}
+                </div>
+              </div>
+            </ng-template>
+          </ng-select>
+        </div>
+        <div *ngIf="buttonClicked && !selectedUser" class="invalid">Please select Assignee.</div>
+      </div>
+
+      <div class="mb-1 chooseSection" autocomplete="off">
+        <label  class="form-label">Section</label>
+          <ng-select class="sectionDropdown" [items]="projectSections" [(ngModel)]="selectedSection" name="section"  placeholder="Select Section">
+            <ng-template ng-option-tmp let-section="item" let-index="index">
+              <div style="display: flex; align-items: center;">
+                <div>
+                  {{ section.sectionName }}
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ng-label-tmp let-item="item">
+              <div style="display: flex; align-items: center;">
+                <div>
+                  {{ item.sectionName }}
+                </div>
+              </div>
+            </ng-template>
+          </ng-select>
+      </div>
+
+      <div>
+        <button class="btn btn-primary d-grid w-50 mx-auto btn-save-task">Save Task</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #archivedTasksModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Archived Tasks</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body" *ngIf="archivedTasks && archivedTasks.length > 0; else noArchivedTasks">
+    <div class="table-responsive text-nowrap">
+      <tr>
+        <th>Task Name</th>
+        <th>Assignee</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th></th>
+      </tr>
+      <tr *ngFor="let task of archivedTasks" class="archTable">
+        <td class="tdName">{{task.taskName}}</td>
+        <td class="tdAssignee">
+          <div style="display: flex; align-items: center;">
+            <div *ngIf="task.profilePicUrl">
+              <img [src]="uploadservice.getImage(task.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" height="25" width="25"/>
+            </div>
+            <div *ngIf="!task.profilePicUrl" class="nameAvatar boardAvatar">
+              <ngx-avatars size="25" bgColor="#5d57c2" [name]="task?.firstName + ' ' + task?.lastName"></ngx-avatars>
+            </div>
+            <div class="tAssigneeName">
+              {{ task.firstName || task.lastName ? (task.firstName + ' ' + task.lastName) : 'Not assigned' }}
+            </div>
+          </div>
+        </td>
+        <td class="tdDate">{{task.startDate | date}}</td>
+        <td class="tdDate">{{task.endDate | date}}</td>
+        <td class="tdCheck"><input class="tPCheck" type="checkbox" style="align-items:center;" [(ngModel)]="task.selected" name="task{{task.id}}"></td>
+      </tr>
+    </div>
+    <div class="mb-3">
+      <button class="btn btn-primary d-grid w-50 mx-auto archBtn" type="button" (click)="removeFromArchived()">Remove from Archived</button>
+    </div>
+  </div>
+  <ng-template #noArchivedTasks>
+    <div class="text-center noArch">There are currently no archived tasks on this project.</div>
+  </ng-template>
+</ng-template>
+
+<ng-template #arhieveCurrentProject>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Archive Project</h4>
+      <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+    <div class="modal-body archBody">
+      <span class="archSpan">Are you sure you want to archive this project?</span>
+    </div>
+    <div class="modal-footer archFooter">
+      <button type="button" class="btn btn-primary d-grid w-100 mx-auto tArchBtn" (click)="confirmArchive()">Archive Project</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #manageSections>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h4>Manage Sections</h4>
+      <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+    <div class="modal-body">
+      <div class="createSection">
+        <h5>Add section</h5>
+        <form (ngSubmit)="createNewSection()">
+          <div class="mb-1 tMng">
+            <input type="text" class="form-control tNoBoxShadow" placeholder="Enter new section name" [(ngModel)]="newSectionName" name="sectionName" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary d-grid w-100 mx-auto addSection" [disabled]="!newSectionName">Create Section</button>
+        </form>
+      </div>
+      <div class="tProjectSection">
+        <div style="margin-bottom: 1rem;">
+          <h5>Section list</h5>
+          <input type="text" class="form-control form-control-sm search tNoBoxShadow" placeholder="Search by section name" [(ngModel)]="searchSection" (input)="filterSections()">
+        </div>
+        <div>
+          <div class="d-flex justify-content-between tableHeaders" style="padding-left: 0;">
+            <span>Name</span>
+            <span style="text-align: right;">Delete section</span>
+          </div>
+          <div class="scroll manageSectionScroll">
+            <table class="table table-sm SectionTable">
+              <tbody>
+                <tr *ngFor="let section of filteredSections">
+                  <td>{{ section.sectionName }}</td>
+                  <td class="delSection tModalRemoveIcon">
+                    <svg *ngIf="userRole != 3 && userRole != 4" (click)="deleteSection(+section.id)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredSections.length == 0">
+                  <td class="noSections">No sections found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,35 @@
+<div (mouseenter)="stopCountDown()" (mouseleave)="countDown()" class="toast_wrapper" [@openClose]="toastService.data && toastService.data.show ? 'open' : 'closed'">
+  <div class="inner_wrapper">
+    <div class="flex" *ngIf="toastService.data" (click)="notificationService.follow_notif($event,toastService.data.target)" (click)="this.toastService.hide()">
+      <img *ngIf="toastService.data.target?.sender?.profilePicUrl && (toastService.data.target.type==0 || toastService.data.target.type==1)" class="dropImg1 rounded-circle shadow-4-strong"  [src]="uploadService.getImage(toastService.data.target.sender.profilePicUrl)" alt="">
+      <ngx-avatars  *ngIf="!toastService.data?.target?.sender?.profilePicUrl && (toastService.data.target.type==0 || toastService.data.target.type==1)" width="40" height="40" bgColor="#5d57c2" [name]="toastService.data.target.sender?.firstName + ' ' + toastService.data.target.sender?.lastName" class="dropImg1 rounded-circle shadow-4-strong"></ngx-avatars>
+      <svg *ngIf="toastService.data.target?.type==2" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#696cff" class="bi bi-clipboard2-check" viewBox="0 0 16 16">
+        <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5z"/>
+        <path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5z"/>
+        <path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+      </svg>
+      <svg *ngIf="toastService.data.target?.type==3 " xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#696cff" class="bi bi-calendar-range" viewBox="0 0 16 16">
+        <path d="M9 7a1 1 0 0 1 1-1h5v2h-5a1 1 0 0 1-1-1M1 9h4a1 1 0 0 1 0 2H1z"/>
+        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+      </svg>
+      <svg *ngIf="toastService.data.target?.type==4" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#696cff" class="bi bi-card-checklist" viewBox="0 0 16 16">
+        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+        <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/>
+      </svg>
+      <div class="toast_content">
+        <h5 class="toast_title">
+          {{ toastService.data.title }}
+        </h5>
+        <div class="toast_text">
+          {{ toastService.data.content }}
+        </div>                      
+      </div>
+    </div>
+    <div class="exit" (click)="this.toastService.hide()" aria-label="close" >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg> 
+    </div>              
+  </div>
+  <div class="progress_bar" [ngClass]="{ success: toastService.data && toastService.data.type === 1 }" #element></div>
+</div>

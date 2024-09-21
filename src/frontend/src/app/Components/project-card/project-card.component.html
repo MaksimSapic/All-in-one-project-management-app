@@ -1,0 +1,119 @@
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<div id="container">
+  <div class="col-md-5 mx-2 float-end" *ngIf="showComponent">
+      <div class="card shadow border-0">
+        <div class="card">
+          <div class="card-header project-header">
+            Create New Project
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="back" viewBox="0 0 16 16" (click)="ToggleProjectCard()">
+              <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <form #createProjectForm="ngForm" class="mg-3" (ngSubmit)="CreateProject()" autocomplete="off" id="ProjectCreate">
+              <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Project Name</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Project Name" [(ngModel)]="newProject.ProjectName" name="Name" [ngClass]="{'is-invalid': buttonClicked && (!newProject.ProjectName || projectNameExists || newProject.ProjectName.length>100)}">
+                <div *ngIf="buttonClicked && !newProject.ProjectName && !projectNameExists" class="invalid">Please enter project name.</div>
+                <div *ngIf="buttonClicked && projectNameExists" class="invalid">Project with the same name already exists.</div>
+                <div *ngIf="buttonClicked && !projectNameExists && newProject.ProjectName.length>100" class="invalid">Project name is too long.</div>
+              </div>
+              <div class="mb-3">
+                <div class="tLabel">
+                  <label for="StartDate" class="form-label">Start Date</label>
+                  <div pTooltip="Please select a date that is today or in the future.">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                      <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="tNgCalendar">
+                  <p-calendar
+                  (click)="$event.stopPropagation()"
+                  [style]="{'width':'100%'}"
+                  [(ngModel)]="newProject.StartDate"
+                  inputId="startDate"
+                  name="startDate"
+                  [showButtonBar]="true"
+                  [firstDayOfWeek]="1"
+                  placeholder="Start Date"
+                  dateFormat="MM dd, yy"
+                  [minDate]="today"
+                  [maxDate]="newProject.EndDate"
+                  [ngClass]="{'ng-invalid': buttonClicked && !newProject.StartDate}"
+                  ></p-calendar>
+                </div>
+                <div *ngIf="buttonClicked && !newProject.StartDate" class="invalid">Please enter start date.</div>
+              </div>
+              <div class="mb-3">
+                <div class="tLabel">
+                  <label for="StartDate" class="form-label">End Date</label>
+                  <div pTooltip="Please choose a date that is not earlier than the project start date.">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                      <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="tNgCalendar">
+                  <p-calendar
+                  (click)="$event.stopPropagation()"
+                  [style]="{'width':'100%'}"
+                  [(ngModel)]="newProject.EndDate"
+                  inputId="endDate"
+                  name="endDate"
+                  [showButtonBar]="true"
+                  [firstDayOfWeek]="1"
+                  placeholder="End Date"          
+                  dateFormat="MM dd, yy"
+                  [minDate]="newProject.StartDate==null?today:(newProject.StartDate<=today?today:newProject.StartDate)"
+                  [ngClass]="{'ng-invalid': buttonClicked && !newProject.EndDate}"></p-calendar>
+                </div>
+                <div *ngIf="buttonClicked && !newProject.EndDate" class="invalid">Please enter end date.</div>
+              </div>
+              <div class="mb-3" >
+                <label for="desc" class="form-label">Description</label>
+                <quill-editor id="desc" class="desc" [(ngModel)]="newProject.Description" [modules]="quillService.editorModules" [formats]="quillService.editorFormats" name="Description" placeholder="Insert description here.."></quill-editor>
+              </div>
+              <div class="mb-3">
+                <label id="lbl" for="assignees" class="form-label">Project Members</label>
+                <ng-select class="addProjAss" [items]="users" [(ngModel)]="selectedUsers" bindLabel="name" placeholder="Select Project Members" optionLabel="name" id="assignee" name="Assignees" [multiple]="true" (click)="$event.stopPropagation()">
+                  <ng-template ng-option-tmp let-user="item">
+                    <div class="user-detail">
+                      <div *ngIf="user.profilePicUrl" class="nameAvatar">
+                        <img [src]="uploadservice.getImage(user.profilePicUrl)" class="avatar rounded-circle shadow-4-strong nameAvatar" height="25" width="25">
+                        <div style="margin-left: 0.4rem;">{{ user.name }}</div>
+                      </div>
+                      <div *ngIf="!user.profilePicUrl" class="nameAvatar">
+                        <ngx-avatars size="25" bgColor="#5d57c2" [name]="user.name" value="75%"></ngx-avatars>
+                        <div style="margin-left: 0.4rem;">{{ user.name }}</div>
+                      </div>
+                      <div (click)="$event.stopPropagation()">
+                        <select (mousedown)="$event.stopPropagation()" [(ngModel)]="user.projectRole" [ngModelOptions]="{standalone: true}" class="form-select form-select-xs">
+                          <option value=1 *ngIf="!SelectedOwner(user)">Project Owner</option>
+                          <option value=2>Manager</option>
+                          <option value=3>Participant</option>
+                          <option value=4 selected>Guest</option>
+                        </select>
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span *ngIf="item.profilePicUrl" class="ng-value-label"><img class="avatar rounded-circle shadow-4-strong"  height="25" width="25"  [src]="uploadservice.getImage(item.profilePicUrl)"> {{item.name}}</span>
+                    <span *ngIf="!item.profilePicUrl" class="ng-value-label"><ngx-avatars size="25" bgColor="#5d57c2" [name]="item.name" value="75%"></ngx-avatars>{{item.name}}</span>
+                    <div class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</div>
+                  </ng-template>
+                </ng-select>
+              </div>
+              <div class="mb-3" class="addProjectBtn">
+                <button class="btn btn-primary tAddBtn" tabindex="0" aria-controls="DataTables_Table_0" type="submit" style="z-index: 0 !important;">Add Project</button>
+              </div>
+          </form>
+          </div>
+        </div>
+        </div>
+    </div>
+</div>

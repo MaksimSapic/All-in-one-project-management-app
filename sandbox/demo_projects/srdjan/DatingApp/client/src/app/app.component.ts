@@ -1,0 +1,61 @@
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent implements OnInit {
+  title = 'Dating app';
+  users: any;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.getUsers();
+  }
+
+  getUsers() {
+    this.http.get('http://localhost:5111/api/users').subscribe({
+      next: (response) => (this.users = response),
+      error: (error) => console.log(error),
+      complete: () => console.log('Zahtev izvrsen'),
+    });
+  }
+
+  addUser(userName: string) {
+    if (!userName) {
+      console.error('Please enter a user name');
+      return;
+    }
+
+    const maxId = this.users.reduce(
+      (max: number, user: { id: number }) => (user.id > max ? user.id : max),
+      0
+    );
+
+    const newUser = { id: maxId + 1, userName: userName };
+    this.http.post('http://localhost:5111/api/users', newUser).subscribe({
+      next: () => {
+        console.log('Korisnik je dodat uspesno');
+        this.getUsers();
+      },
+      error: (error) => console.log(error),
+    });
+  }
+
+  deleteUser(userId: number) {
+    if (!confirm('Da li ste sigurni da zelite da izbrisete ovog korisnika?')) {
+      return;
+    }
+
+    this.http.delete(`http://localhost:5111/api/users/${userId}`).subscribe({
+      next: () => {
+        console.log('Korisnik je uspesno obrisan');
+        this.getUsers();
+      },
+      error: (error) => console.log(error),
+    });
+  }
+}

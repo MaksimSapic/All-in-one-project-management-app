@@ -1,0 +1,39 @@
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic">
+    <div class="authentication-inner">
+      <div class="card">
+        <div class="card-body">
+          <div class="app-brand justify-content-center">
+            <img src="../../../assets/_images/logo_zoom.png" alt="Logo">
+            <span class="app-brand-text">AccessDenied</span>
+          </div>
+          <h4 class="mb-2">Welcome to AccessDenied! 👋</h4>
+          <p class="mb-4">Please sign-in to your account and start the adventure</p>
+          <form #loginForm="ngForm" class="mb-3" (ngSubmit)="login()" autocomplete="off" id="formAuthentication">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="form3Example3" class="form-control" name="email" [(ngModel)]="newUser.Email" placeholder="Enter your email"/>
+            </div>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Password</label>
+                <a routerLink="/forgotpass" tabindex="-1" class="tForgotpass">
+                  <small>Forgot Password?</small>
+                </a> 
+            </div>
+                <div class="input-group input-group-merge">
+                  <input type="password" id="form3Example4" class="form-control" name="password" [(ngModel)]="newUser.Password" placeholder="Enter your password"/>
+                </div>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="personimage">
+      <img src="../../../assets/_images/loginImage.png" alt="loginImage" (contextmenu)="disableRightClick($event)">
+    </div>
+  </div>
+</div>

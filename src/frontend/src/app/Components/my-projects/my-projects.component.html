@@ -1,0 +1,199 @@
+<app-nav></app-nav>
+<app-project-card class="proj_card" *ngIf="showProjectCard" (closeCard)="handleCloseCard()" (refreshNeeded)="ngOnInit()"></app-project-card>
+<div class="container-xxl">
+  <div id="all">
+    <div class="project-heading flex-container">
+      <span class="header">All Projects</span>
+      <div class="d-flex justify-content-end page-size-container">
+        <select class="page_size" (change)="changePageSize($event)">
+          <option value="" hidden selected>Select page size</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+        </select>
+        <button *ngIf="userRole==2" class="btn btn-primary btn-sm addProject" (click)="ToggleProjectCard()"><span style="margin-right: 0.5rem;">+</span>Add Project</button>
+      </div>
+    </div>
+    <div class="mFilters">
+      <div class="filter tNameSearch">
+        <input class="form-control tNameSearch" type="text" placeholder="Search by Project Name or Owner" [(ngModel)]="searchText" (input)="filterProjects(); "/>
+      </div>
+      <div class="filter">
+        <select class="form-select" name="status" id="status" [(ngModel)]="selectedStatus" (change)="filterProjects();">
+          <option value="" hidden selected>Select Status</option>
+          <option value="">Select All</option>
+          <option value="PROPOSED">Proposed</option>
+          <option value="INPROGRESS">In Progress</option>
+          <option value="COMPLETED">Completed</option>
+        </select>
+      </div>
+      <div class="filter">
+        <p-calendar
+          [hideOnDateTimeSelect]="false"
+          [style]="{'width':'100%'}"
+          (onSelect)="filterProjects()"
+          (onClearClick)="filterProjects()"
+          placeholder="Filter by Date Range"
+          [(ngModel)]="rangeDates" 
+          selectionMode="range" 
+          [readonlyInput]="true"
+          [showButtonBar]="true"
+          dateFormat="MM dd, yy"
+          [firstDayOfWeek]="1"></p-calendar>
+      </div>
+    </div>
+    <div class="table-responsive text-nowrap tTable">
+      <table>    
+        <tr style="font-size: 16px !important;" class="tHeader">
+          <th style="width: 20% !important;">Project Name
+            <svg (click)="toggleSortOrder('ProjectName')" [ngClass]="getSortClass('ProjectName')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+          <th style="width: 15% !important;">Project Owner
+            <svg (click)="toggleSortOrder('ProjectOwner')" [ngClass]="getSortClass('ProjectOwner')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+          <th style="width: 15% !important;">Status
+            <svg (click)="toggleSortOrder('ProjectStatus')" [ngClass]="getSortClass('ProjectStatus')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter" viewBox="0 0 16 16" >
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+          <th style="width: 20% !important;">Progress
+            <svg (click)="toggleSortOrder('Progress')" [ngClass]="getSortClass('Progress')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+          <th style="width: 20% !important;">Start Date
+            <svg (click)="toggleSortOrder('StartDate')" [ngClass]="getSortClass('StartDate')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+          <th style="width: 20% !important;">End Date
+            <svg (click)="toggleSortOrder('EndDate')" [ngClass]="getSortClass('EndDate')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="filter" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+          </th>
+        </tr>
+        <tr *ngFor="let project of projects">
+          <ng-container>
+            <td class="project-name" (click)="goToProject(project.id)">{{ project.projectName }}</td>
+            <td *ngIf="!projectOwners[project.id]" class="mx-1 pOwners">
+              <span class="d-flex align-items-center mx-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" style="margin-right:0.25rem" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                </svg>Not assigned
+              </span>
+            </td>
+            <td *ngIf="this.projectOwners && this.projectOwners[project.id]" class="pOwners">
+              <span *ngIf="projectOwners[project.id]?.profilePicUrl" class="d-flex align-items-center">
+                <img class="avatar rounded-circle shadow-4-strong mx-1" height="25" width="25" [src]="uploadservice.getImage(projectOwners[project.id]?.profilePicUrl ?? '')">
+                {{projectOwners[project.id]?.firstName + ' ' + projectOwners[project.id]?.lastName}}
+              </span>
+              <span *ngIf="!projectOwners[project.id]?.profilePicUrl" class="d-flex align-items-center">
+                <ngx-avatars class="mx-1" size="25" bgColor="#5d57c2" [name]="projectOwners[project.id]?.firstName + ' ' + projectOwners[project.id]?.lastName" value="75%"></ngx-avatars>
+                {{projectOwners[project.id]?.firstName + ' ' + projectOwners[project.id]?.lastName}}
+              </span>
+            </td>
+            <td [ngClass]="getStatusString(project.projectStatus)">
+              <p style="width: 75% !important;">{{ getStatusString(project.projectStatus) }}</p>
+            </td>
+            <td>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped" role="progressbar" [style.width.%]="project.progress" [attr.aria-valuenow]="project.progress" [ngClass]="getProgressClass(project.progress)" aria-valuemin="0" aria-valuemax="100">{{project.progress}}%</div>
+                <span *ngIf="project.progress<=15" class="progress-label" [ngStyle]="{'margin-right': project.progress + 'px'}">{{project.progress}}%</span>
+              </div>
+            </td>
+            <td>{{ project.startDate | date }}</td>
+            <td [ngStyle]="{'color': isOverdue(project.endDate) ? '#ec818a' : ''}">{{ project.endDate | date }}</td>
+          </ng-container>
+        </tr>
+      </table>
+    </div>
+  </div>   
+  <div class="tFooter">
+    <div class="ViewarchProj" (click)="openViewArchProjModal(ViewArchivedProjModal)" *ngIf="userRole == 2">
+      <div class="archProject"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16" style="margin-right: 3px;">
+        <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+        </svg>View Archived Projects
+      </div>
+    </div>
+    <div class="tPageinationElements" *ngIf="this.filteredProjects>this.pageSize">
+      <ul class="pagination">
+        <li *ngIf="totalPagesArray.length>5" class="paginate_buttons previous" [class.disabled]="currentPage === 1">
+          <button (click)="goToPage(1)" [disabled]="currentPage === 1">&laquo;</button>
+        </li>
+        <li class="paginate_button previous" [class.disabled]="currentPage === 1">
+          <button (click)="prevPage()" [disabled]="currentPage === 1">&lt;</button>
+        </li>
+        <li class="paginate_button" *ngFor="let pageNumber of getDisplayedPages()">
+          <button (click)="goToPage(pageNumber)" [class.active]="pageNumber === currentPage">{{ pageNumber }}</button>
+        </li>
+        <li class="paginate_button next" [class.disabled]="currentPage === totalPages">
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages">&gt;</button>
+        </li>
+        <li *ngIf="totalPagesArray.length>5" class="paginate_buttons next" [class.disabled]="currentPage === totalPages">
+          <button  (click)="goToPage(totalPagesArray.length)" [disabled]="currentPage === totalPages">&raquo;</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<ng-template #ViewArchivedProjModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Archived Projects</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  
+  <div class="modal-body" *ngIf="archivedProjects && archivedProjects.length > 0; else noArchivedProjects">
+    <div>
+      <tr class="tTop" style="border-top: none !important;">
+        <th>Project Name</th>
+        <th>Project Owner</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th></th>
+      </tr>
+      <tr class="archTable" *ngFor="let project of archivedProjects" style="border-top: none !important;">
+        <td class="tdName">{{project.projectName}}</td>
+        <td class="tdAssignee">
+          <div style="display: flex; align-items: center;">
+            <div *ngIf="project.ownerProfilePicture">
+              <img [src]="uploadservice.getImage(project.ownerProfilePicture)" class="avatar rounded-circle shadow-4-strong" height="25" width="25"/>
+            </div>
+            <div *ngIf="!project.ownerProfilePicture && !project.ownerFirstName" class="nameAvatar boardAvatar tNoSectionAvatar" style=" padding: 0 !important;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" style="margin-right:0.25rem" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+              </svg>
+            </div>
+            <div *ngIf="!project.ownerProfilePicture && project.ownerFirstName">
+              <ngx-avatars size="25" bgColor="#5d57c2" [name]="project.ownerFirstName + ' ' + project.ownerLastName"></ngx-avatars>
+            </div>
+            <div class="tAssigneeName" [ngStyle]="!project.ownerFirstName ? {'margin': '0'} : {}">
+              {{ project.ownerFirstName || project.ownerLastName ? (project.ownerFirstName + ' ' + project.ownerLastName) : 'Not assigned' }}
+            </div>
+          </div>
+        </td>
+        <td class="tdDate">{{project.startDate | date}}</td>
+        <td class="tdDate">{{project.endDate | date}}</td>
+        <td class="tdCheck"><input class="tPCheck" type="checkbox" style="align-items:center;" [(ngModel)]="project.selected" name="project{{project.id}}"></td>
+      </tr>
+    </div>
+    <div class="mb-3">
+      <button class="btn btn-primary d-grid w-50 mx-auto archBtn" type="button" (click)="removeProjectFromArchived()">Remove from Archived</button>
+    </div>
+  </div>
+  <ng-template #noArchivedProjects>
+    <div class="text-center noArch">There are no archived projects.</div>
+  </ng-template>
+</ng-template>
+
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>

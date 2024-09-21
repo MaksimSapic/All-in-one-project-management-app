@@ -1,0 +1,143 @@
+<app-nav></app-nav>
+<div class="container-xxl">
+  <div class="card">
+    <div class="d-flex align-items-start align-items-sm-center tContainer">
+      <div id="account_banner">
+        <div id="photo_wrap">
+          <img *ngIf="userInfo?.profilePicUrl" id="profile_photo"[src]="uploadService.getProfileImage(userInfo.profilePicUrl)">
+          <ngx-avatars *ngIf="!userInfo?.profilePicUrl && themeService.isDarkTheme" size="130" bgColor="rgb(56, 54, 87)" fgColor="rgb(183, 180, 242)" [name]="userInfo?.firstName + ' ' + userInfo?.lastName"></ngx-avatars>
+          <ngx-avatars *ngIf="!userInfo?.profilePicUrl && !themeService.isDarkTheme" size="130" bgColor="#5d57c2" [name]="userInfo?.firstName + ' ' + userInfo?.lastName"></ngx-avatars>
+          <img class="overlay" src="../../../assets/profile_photo_placeholders/change_photo.jpg" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><button class="dropdown-item" (click)="viewImageModal(viewModal)" [disabled]="!userInfo?.profilePicUrl" >View</button></li>
+            <li><button class="dropdown-item" (click)="inputClick.click()">
+              <span *ngIf="userInfo?.profilePicUrl">Change</span>
+              <span *ngIf="!userInfo?.profilePicUrl">Upload</span></button>
+            </li>
+            <li><button class="dropdown-item" (click)="removeImageModal(removalModal)" [disabled]="userInfo?.profilePicUrl==null">Remove</button></li>
+          </ul>
+        </div>
+        <div class="fullname">
+          <span id="rolename">{{role}}</span>
+        </div>
+        <input #inputClick type="file" style="display: none;" (change)="onImageSelected($event,cropperModal)" accept="image/*">
+      </div>
+      <div id="user_info" *ngIf="userInfo">
+        <div class="tUserInfo">
+          <div class="InfoWrap">
+            <div class="tInfoCategory">First name:</div>
+            <div class="tInfo">{{userInfo?.firstName}}</div>
+          </div>
+          <div class="InfoWrap">
+            <div class="tInfoCategory">Last name:</div>
+            <div class="tInfo">{{userInfo?.lastName}}</div>
+          </div>
+          <div class="InfoWrap">
+            <div class="tInfoCategory">Email:</div>
+            <div class="tInfo">{{userInfo?.email}}</div>
+          </div>
+        </div>
+      </div>
+      <div id="clear"></div>
+    </div>
+  </div>
+  <div class="card tPassReset">
+    <h5>Change Password</h5>
+    <div class="warning-display" [ngClass]="{'d-none': showSuccess, 'd-block': showError}">
+      Ensure that your password is at least 5 characters long.
+    </div>
+    <div class="success-display" [ngClass]="{'d-block': showSuccess, 'd-none': !showSuccess}">
+      Password changed successfully!
+    </div>
+    <div id="inputs">
+      <div class="mb-3 form-password-toggle">
+        <div class="d-flex justify-content-between">
+          <label class="form-label tPassLabel" for="password">Current Password</label>
+        </div>
+          <div class="input-group input-group-merge">
+            <input [ngClass]="{'is-invalid': invalidCurrPassword}" (ngModelChange)="turnOfCurrentPassError()" style="font-size: 15px !important; line-height: 23px !important; padding: 0.4375rem 0.875rem;" type="password" class="form-control" name="password" [(ngModel)]="newData.CurrentPassword" placeholder="Enter Current Password"/>
+          </div>
+      </div>
+      <div class="mb-3 form-password-toggle">
+        <div class="d-flex justify-content-between">
+          <label class="form-label tPassLabel" for="password">New Password</label>
+        </div>
+          <div class="input-group input-group-merge">
+            <input [ngClass]="{'is-invalid': invalidNewPassword && (newData.CurrentPassword.length>=5 || (newData.NewPassword && newData.NewPassword.length>30))}" (ngModelChange)="turnOfNewPassError()" style="font-size: 15px !important; line-height: 23px !important; padding: 0.4375rem 0.875rem;" type="password" class="form-control" name="password" [(ngModel)]="newData.NewPassword" placeholder="Enter New Password"/>
+          </div>
+      </div>
+      <div class="mb-3 form-password-toggle">
+        <div class="d-flex justify-content-between">
+          <label class="form-label tPassLabel" for="password">Confirm New Password</label>
+        </div>
+          <div class="input-group input-group-merge">
+            <input style="font-size: 15px !important; line-height: 23px !important; padding: 0.4375rem 0.875rem;" type="password" class="form-control" name="confirmpass" #confirmPasswordInput="ngModel" [(ngModel)]="confirmpass" [class.is-invalid]="
+            confirmpass !== newData.NewPassword &&
+            confirmpass !== ''"
+            placeholder="Confirm New Password"/>
+          </div>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary d-grid" type="submit" [disabled]="!passwordMatch()" (click)="apply_changes()">Change Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #cropperModal style="text-align:center;">
+  <div class="modal-header">
+    <h5 class="modal-title pull-left">Please crop your photo</h5>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body" style="padding: 0;">
+    <image-cropper style="padding: 0;"
+      [imageChangedEvent]="imgChangeEvt"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="4 / 4"
+      [resizeToWidth]="256"
+      format="png"
+      (imageCropped)="cropImg($event)"
+      (imageLoaded)="imgLoad()"
+      (cropperReady)="initCropper()"
+      (loadImageFailed)="imgFailed()"></image-cropper>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary d-grid w-100" (click)="uploadCroppedImage()"> Confirm</button>
+  </div>
+</ng-template>
+
+<ng-template #removalModal>
+  <div class="modal-container" style="color: #697a8d; font-size: 16px;">
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Remove photo?</h4>
+      <svg (click)="removeModalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+    <div class="modal-body archBody">
+      <span class="archSpan">Are you sure you want to remove your profile picture? This action is irreversible.</span>
+    </div>
+    <div class="modal-footer archFooter">
+      <button class="btn btn-primary d-grid w-100 mx-auto" (click)="this.removeImage()">Remove Image</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #viewModal class="modal-body">
+  <div class="modal-container" style="color: #697a8d; font-size: 16px;">
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Profile Picture</h4>
+      <svg (click)="viewModalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+    <div class="modal-body tViewImg">
+      <img *ngIf="userInfo.profilePicUrl" [src]="uploadService.getProfileImage(userInfo.profilePicUrl)">
+    </div>
+  </div>
+</ng-template>
+
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>

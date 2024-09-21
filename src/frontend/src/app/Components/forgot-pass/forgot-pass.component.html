@@ -1,0 +1,39 @@
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic">
+    <div class="authentication-inner">
+      <div class="card">
+        <div class="card-body">
+          <div class="app-brand justify-content-center">
+            <img src="../../../assets/_images/logo_zoom.png" alt="Logo">
+            <span class="app-brand-text">AccessDenied</span>
+          </div>
+          <div *ngIf="!emailSent">
+          <h4 class="mb-2">Forgot Password? 🔒</h4>
+          <p class="mb-4">Enter your email and we'll send you the link to reset the password</p>
+
+          <form #loginForm="ngForm" class="mg-3" autocomplete="off" id="formAuthentication" (ngSubmit)="sendResetLink()">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input [(ngModel)]="resetEmail.Receiver" type="email" id="form3Example3" class="form-control" name="email" placeholder="Enter your email"/>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit">Reset Password</button>
+            </div>
+            <div class="mb-3">
+                <a routerLink="/login"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#5f61e6" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                  </svg> Back to login</a>
+            </div>
+          </form>
+        </div>
+        <div *ngIf="emailSent" class="remailsent">
+          Password reset email was sent.
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="personimage">
+    <img src="../../../assets/_images/forgotPassImage.png" alt="forgotPass" (contextmenu)="disableRightClick($event)">
+  </div>
+</div>  

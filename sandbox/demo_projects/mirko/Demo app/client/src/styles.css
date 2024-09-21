@@ -1,0 +1,60 @@
+/* Center everything */
+.container {
+  text-align: center;
+}
+
+/* Style for the table */
+.user-table {
+  width: 70%;
+  margin: 0 auto; /* Center the table horizontally */
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+
+.user-table th,
+.user-table td {
+  padding: 12px;
+  text-align: left;
+}
+
+.user-table th {
+  background-color: #007bff; /* Blue header background color */
+  color: #fff; /* White text color */
+}
+
+.user-table td {
+  background-color: #f8f9fa; /* Light gray cell background color */
+  color: #333; /* Dark text color */
+}
+
+/* Alternate row background color */
+.user-table tr:nth-child(even) {
+  background-color: #e2e6ea; /* Lighter gray for even rows */
+}
+
+/* Hover effect on rows */
+.user-table tbody tr:hover {
+  background-color: #cce5ff; /* Light blue on hover */
+}
+
+/* Style for the input and button */
+input[type="text"],
+button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: teal; /* Green button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838; /* Darker green on hover */
+}

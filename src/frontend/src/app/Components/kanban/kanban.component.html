@@ -1,0 +1,86 @@
+<div class="board">
+  <div class="board-wrapper" cdkDropListGroup cdkDropList cdkDropListOrientation="horizontal" [cdkDropListData]="taskStatuses" (cdkDropListDropped)="dropColumn($event)">
+    <ng-container *ngFor="let status of taskStatuses">
+      <div *ngIf="status.name !== 'Archived'" class="card draggable" cdkDrag [cdkDragDisabled]="userRole === 4 || userRole === 3">
+        <div class="card-header" 
+        [style.background-color]="themeService.isDarkTheme ? (getLessPoppingColor(status.color) + ' !important') : status.color" 
+        [style.color]="themeService.isDarkTheme ? (getPoppingColor(status.color) + ' !important') : null">
+          <div class="status-name" *ngIf="(status.name=='Proposed' || status.name=='InProgress' || status.name=='InReview' || status.name=='Completed')
+          || (userRole==3 || userRole==4)">
+            {{status.name}}
+          </div>
+          <div class="status-input" *ngIf="(status.name!='Proposed' && status.name!='InProgress' && status.name!='InReview' && status.name!='Completed'
+            && (userRole==0 || userRole==1 || userRole==2))">
+            <input [style.color]="themeService.isDarkTheme ? (getPoppingColor(status.color) + ' !important') : '#212529 !important'" class="titleInp" id="statusName" [(ngModel)]="status.tempStatusName" (blur)="renameTaskStatus(status.id, status.tempStatusName)">
+          </div>
+          <div class="more-options" *ngIf="(status.name !== 'Proposed' && status.name !== 'InProgress' && status.name !== 'InReview' && status.name !== 'Completed') && (userRole==0 || userRole==1 || userRole==2)" (click)="openDeleteStatusModal(deleteBoard, status.name, status.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body boardBody" cdkDropList [id]="status.name" [cdkDropListData]="tasksBySection[status.name]" (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let task of tasksBySection[status.name]"  class="card task" cdkDrag [cdkDragData]="task" [cdkDragDisabled]="userRole === 4">
+            <div [class.clicked]="clickedTask?.id === task.id" (click)="onTaskClick($event,task.id)" class="card-body-task-title">{{task.taskName}}
+            </div>
+            <div class="card-footer assignee" style="display: flex; align-items: center;">
+              <div *ngIf="task.profilePicUrl" class="nameAvatar boardAvatar">
+                <img [src]="uploadservice.getImage(task.profilePicUrl)" class="avatar rounded-circle shadow-4-strong" height="25" width="25"/>
+              </div>
+              <div *ngIf="!task.profilePicUrl" class="nameAvatar boardAvatar">
+                <ngx-avatars *ngIf="task.firstName" size="25" bgColor="#5d57c2" [name]="task?.firstName + ' ' + task?.lastName"></ngx-avatars>
+                <svg *ngIf="!task.firstName" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" style="margin-right:0.25rem" viewBox="0 0 16 16">
+                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                </svg>
+              </div>
+              {{ task.firstName || task.lastName ? (task.firstName + ' ' + task.lastName) : 'Not assigned' }}
+            </div>
+          </div>
+        </div>
+      </div>
+  </ng-container>
+  <div *ngIf="userRole != 4 && userRole != 3" class="newBoard" (click)="openSimpleModal(newBoard, 'newBoard')" pTooltip="Create Board"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+    </svg>
+  </div>
+</div>
+
+<ng-template #deleteBoard>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Delete Board</h4>
+    <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">This action will delete the <b>{{currentSectionName}}</b> Board and move all of its tasks to the <b>Proposed</b> Board.</div>
+    <div class="mb-3">
+      <button class="btn btn-primary d-grid w-100 mx-auto" (click)="deleteBoardFunction()">Delete Board</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #newBoard>
+  <div class="modal-header">
+      <h4 class="modal-title pull-left">Add New Board</h4>
+      <svg (click)="modalRef?.hide()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+      </svg>
+    </div>
+  <div class="modal-body">
+      <form (ngSubmit)="saveNewBoard()" class="mb-3">
+          <div class="mb-3" autocomplete="off">
+              <label for="newSection" class="form-label">Section Name</label>
+              <input type="text" class="form-control ticoForm" name="newSection" [(ngModel)]="newSectionName" placeholder="Enter new section's name"/>
+          </div>
+          <div class="mb-3">
+              <label for="sectionColor" class="form-label">Section Color</label>
+              <input type="color" class="form-control" id="sectionColor" name="sectionColor" [(ngModel)]="newSectionColor" required>
+          </div>
+          <div class="mb-3 btn-save-section">
+              <button class="btn btn-primary d-grid w-100 mx-auto" type="submit">Add New Board</button>
+          </div>
+      </form>
+  </div>
+</ng-template>
